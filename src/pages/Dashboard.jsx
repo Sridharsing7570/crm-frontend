@@ -202,13 +202,13 @@ export default function Dashboard() {
 
         {/* Main area: Sidebar + Content */}
         <div className="min-h-screen flex ">
-          <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          {/* <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} /> */}
 
           <div className="flex-1 flex flex-col">
-            <Header
+            {/* <Header
               onMenuClick={() => setSidebarOpen(!sidebarOpen)}
               notifications={notifications}
-            />
+            /> */}
 
             <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-7xl">
