@@ -1,27 +1,46 @@
-name: Build
+name: SonarQube Analysis
 
 on:
   push:
     branches:
-      - main
-
+      - main # or your main development branch
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main # or your main development branch
 
 jobs:
   build:
-    name: Build and analyze
-    runs-on: windows-latest
-    
+    name: Build and Analyze
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: SonarSource/sonarqube-quality-gate-action@v1
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          fetch-depth: 0 # Required for SonarQube to get full history
+
+      - name: Setup Java (if needed for your project)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17' # Adjust based on your project's Java version
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2.4.0 # Use the latest version
+        with:
+          projectBaseDir: '.' # Optional: specify if your project is in a subdirectory
+          args: >
+            -Dsonar.projectKey=Sridhar_dev_project
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            # Add other scanner properties as needed, e.g., for language-specific analysis
+            # -Dsonar.sources=src
+            # -Dsonar.tests=test
+            # -Dsonar.java.binaries=target/classes
+
+      - name: Wait for Quality Gate (Optional)
+        uses: SonarSource/sonarqube-quality-gate-check-action@v2.4.0 # Use the latest version
+        with:
+          sonarHostUrl: ${{ secrets.SONAR_HOST_URL }}
+          sonarToken: ${{ secrets.SONAR_TOKEN }}
