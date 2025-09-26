@@ -27,7 +27,7 @@ jobs:
           java-version: '17' # Adjust based on your project's Java version
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v2.4.0 # Use the latest version
+        uses: SonarSource/sonarqube-scan-action@v6 # Use the latest version
         with:
           projectBaseDir: '.' # Optional: specify if your project is in a subdirectory
           args: >
